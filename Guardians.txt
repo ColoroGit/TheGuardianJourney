@@ -1,4 +1,4 @@
-Stormheart,100,,Tesla
+Stormheart,100
 Merlin,95,Stormheart,Hill Village
 Astrid,92,Stormheart,Capital City
 Eldrin,89,Merlin,Forest Village

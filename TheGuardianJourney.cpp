@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <queue>
 #include <unordered_map>
 #include <fstream>
 #include <sstream>
@@ -15,6 +16,28 @@ class Guardian
 	public: 
 	int PL; //Nivel de Poder (Power Level en inglés, de ahí el nombre)
 	vector<Guardian*> apprentices; //un registro que representa la jerarquía maestro-aprendiz dentro del programa (un árbol general)
+	
+	Guardian(string name, int pl, string village)
+	{
+		this->name = name;
+		this->PL = pl;
+		this->village = village;
+	}
+	
+	string GetName()
+	{
+		return name;
+	}
+	
+	void PrintGuardians()
+	{
+		cout << "Nombre: " << name << "; Nivel de Poder: " << PL << "; Villa: " << village << "; Aprendices: ";
+		for (Guardian* g : apprentices)
+		{
+			cout << "\n\t";
+			g->PrintGuardians();
+		} 
+	}
 };
 
 class Village
@@ -81,6 +104,49 @@ void PrintGraph(vector<Village*> adjList) //Funcion para imprimir las conexiones
 	}
 }
 
+/*
+bool IsNumber(string s) //Funcion para saber si un string entregado es un número o no
+{
+	for (int i = 0; i < s.length(); i++ ) 
+	{
+		if (!isdigit(s[i])) 
+		{
+			return false;
+		}
+	}
+	return true;
+}
+*/
+
+Guardian* FindGuardian(Guardian* root, string name)
+{
+	queue<Guardian*> queue;
+	queue.push(root);
+	
+	if (root == NULL)
+	{
+		return NULL;
+	}
+	
+	while (!queue.empty())
+	{
+		Guardian* current = queue.front();
+		queue.pop();
+		
+		if (current->GetName() == name)
+		{
+			return current;
+		}
+		
+		for (Guardian* g : current->apprentices)
+		{
+			queue.push(g);
+		}
+	}
+	
+	return NULL;
+}
+
 int main()
 {
 	vector<Village*> map;
@@ -100,6 +166,7 @@ int main()
 	if (file.is_open()) 
 	{
 		string line;
+		bool tesla = false;
 		
 		while (getline(file, line)) 
 		{
@@ -137,15 +204,100 @@ int main()
 			}
 			
 			new1->AddEdge(new1, new2);
+			
+			if (name1 == "Tesla" || name2 == "Tesla")
+			{
+				tesla = true;
+			}
 		}
 		
 		PrintGraph(map);
 		
 		file.close();
+		
+		if (!tesla)
+		{
+			cout << "Falta la ciudad <Tesla> en la lista de ciudades, no se puede iniciar el juego sin ella" << endl
+			<< "(Asegurese de que se encuentre escrita tal cual como se indica entre <> en el archivo Villages.txt)";
+			return 0;
+		}
 	}
 	else 
 	{	
 		cout << "Failed to open file: " << filename << endl;
+		return 0;
+	}
+	
+	/*
+		Carga del archivo de Guardianes
+	*/
+	
+	Guardian* root; //Arbol para representar la jerarquía maestro/aprendiz de los Guardianes
+	
+	filename = "Guardians.txt";
+	ifstream file2(filename);
+	
+	if (file2.is_open())
+	{
+		string line;
+		
+		getline(file2, line);
+		stringstream ss(line);
+		
+		string name;
+		getline(ss, name, ',');
+		
+		string powerLevel;
+		getline(ss, powerLevel, ',');
+		int pl = stoi(powerLevel);
+		const int MaxPL = stoi(powerLevel);
+		
+		root = new Guardian(name, pl, "Tesla");
+		
+		while (getline(file2, line))
+		{
+			stringstream ss(line);
+			
+			getline(ss, name, ',');
+			
+			getline(ss, powerLevel, ',');
+			pl = stoi(powerLevel);
+			
+			string master;
+			getline(ss, master, ',');
+			Guardian* Master = FindGuardian(root, master);
+			
+			string village;
+			getline(ss, village, ',');
+			
+			if (Exists(readVillages, village))
+			{
+				if (Master != NULL)
+				{
+					Master->apprentices.push_back(new Guardian(name, pl, village));
+				}
+				else
+				{
+					cout << "Hubo un problema al tratar de asignar a un aprendiz a su maestro, ya que el segundo no existia" << endl
+					<< "(Asegurese de que, en el archivo de texto Guardians.txt, exista un giardian antes de que se le puedan asignar aprendices" << endl
+					<< "En otras palabras, que siempre se escriba un mastro antes que su aprendiz";
+					return 0;
+				}
+			}
+			else
+			{
+				cout << "Hubo un problema al tratar de asignar un guardian a su villa respectiva," << endl
+				<< "ya que la segunda no se encontraba dentro de las villas cargadas en el archivo Villages.txt" << endl;
+				return 0;
+			}
+		}
+		
+		root->PrintGuardians();
+	}
+	else
+	{
+		cout << "Failed to open file: " << filename << endl;
+		return 0;
 	}
 	
 	return 0;
