@@ -29,12 +29,16 @@ class Guardian
 		return name;
 	}
 	
-	void PrintGuardians()
+	string GetVillage()
 	{
-		cout << "Nombre: " << name << "; Nivel de Poder: " << PL << "; Villa: " << village << "; Aprendices: ";
+		return village;
+	}
+	
+	void PrintGuardians() ////////////TESTEO//////////////
+	{
+		cout << "Nombre: " << name << "; Nivel de Poder: " << PL << "; Villa: " << village << "; Aprendices: " << endl;
 		for (Guardian* g : apprentices)
 		{
-			cout << "\n\t";
 			g->PrintGuardians();
 		} 
 	}
@@ -43,15 +47,17 @@ class Guardian
 class Village
 {
 	string name;
-	Guardian* master;
 	
 	public:
 		
+	Guardian* master;
+	vector<Guardian*> apprentices;
 	vector<Village*> adjVillages; //registro de las conexiones que existen entre villas (emulan un grafo)
 	
 	Village (string name)
 	{
 		this->name = name;
+		master = NULL;
 	}
 	
 	string GetName()
@@ -91,16 +97,25 @@ Village* FindVillage(vector<Village*> adjList, string name) //retorna la referen
 	return NULL;
 }
 
-void PrintGraph(vector<Village*> adjList) //Funcion para imprimir las conexiones que existen entre villas
+void PrintGraph(vector<Village*> adjList) //Funcion para imprimir las conexiones que existen entre villas //////////TESTEO/////////
 {
 	for (Village* vertex : adjList)
 	{
-		cout << "Vecinos de " << vertex->GetName() << ": ";
-		for (Village* v : vertex->adjVillages)
+		if (vertex->GetName() != "Tesla")
 		{
-			cout << v->GetName() << " ";
+			cout << "Vecinos de " << vertex->GetName() << ": ";
+			for (Village* v : vertex->adjVillages)
+			{
+				cout << v->GetName() << " ";
+			}
+			cout << "Maestro de la villa: " << vertex->master->GetName() << endl;
+			cout << "Aprendices de la villa: ";
+			for (Guardian* a : vertex->apprentices)
+			{
+				cout << a->GetName() << " ";
+			}
+			cout << endl;	
 		}
-		cout << endl;
 	}
 }
 
@@ -118,7 +133,7 @@ bool IsNumber(string s) //Funcion para saber si un string entregado es un número
 }
 */
 
-Guardian* FindGuardian(Guardian* root, string name)
+Guardian* FindGuardian(Guardian* root, string name) //retorna la referencia a la instancia del Guardian que tenga el nombre entregado
 {
 	queue<Guardian*> queue;
 	queue.push(root);
@@ -145,6 +160,42 @@ Guardian* FindGuardian(Guardian* root, string name)
 	}
 	
 	return NULL;
+}
+
+void AssignGuardian(vector<Village*> map, Guardian* root, Guardian* g)
+{
+	Village* current = FindVillage(map, g->GetVillage());
+	
+	if (current->master == NULL)
+	{
+		current->master = g;
+		return;
+	}
+	
+	if (current->master->PL < g->PL)
+	{
+		current->apprentices.push_back(current->master);
+		current->master = g;
+	}
+	else
+	{
+		current->apprentices.push_back(g);
+	}
+}
+
+bool CheckVillages(vector<Village*> map)
+{
+	for (Village* v : map)
+	{
+		if (v->GetName() != "Tesla")
+		{
+			if (v->master == NULL || v->apprentices.size() <= 0)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 int main()
@@ -211,8 +262,6 @@ int main()
 			}
 		}
 		
-		PrintGraph(map);
-		
 		file.close();
 		
 		if (!tesla)
@@ -229,7 +278,9 @@ int main()
 	}
 	
 	/*
-		Carga del archivo de Guardianes
+		Carga del archivo de Guardianes: Se parte por hacer la carga del "Jefe Final", que en el caso específico del proyecto es
+		Stormheart, según sus puntos de poder se define el máximo posible. Posteriormente se le asignan sus aprendices según
+		se vayan entregando en el archivo Guardians.txt, y por último, se asignan a sus respectivas villas.
 	*/
 	
 	Guardian* root; //Arbol para representar la jerarquía maestro/aprendiz de los Guardianes
@@ -252,6 +303,13 @@ int main()
 		int pl = stoi(powerLevel);
 		const int MaxPL = stoi(powerLevel);
 		
+		if (MaxPL <= 1)
+		{
+			cout << "Hubo un problema al leer los puntos de poder maximos, ya que, o se ingreso algo que no es un numero," << endl
+			<< "o ese numero es menor o igual a 1 (Se recomienda que sea un numero mayor o igual a 50)" << endl;
+			return 0;
+		}
+		
 		root = new Guardian(name, pl, "Tesla");
 		
 		while (getline(file2, line))
@@ -262,6 +320,13 @@ int main()
 			
 			getline(ss, powerLevel, ',');
 			pl = stoi(powerLevel);
+			
+			if (pl <= 1)
+			{
+				cout << "Hubo un problema al leer los puntos de poder de uno de los guardianes, ya que, o se ingreso algo que no es un numero," << endl
+				<< "o ese numero es menor o igual a 1 (Se recomienda que sea un numero mayor o igual a 50)" << endl;
+				return 0;
+			}
 			
 			string master;
 			getline(ss, master, ',');
@@ -274,13 +339,32 @@ int main()
 			{
 				if (Master != NULL)
 				{
-					Master->apprentices.push_back(new Guardian(name, pl, village));
+					if (Master->PL < pl)
+					{
+						if (Master->PL - 1 <= 0)
+						{
+							cout << "Hubo un problema al leer los puntos de poder de uno de los guardianes, ya que ese numero es menor o igual a 0 (Se recomienda que sea un numero mayor o igual a 50)" << endl;
+							return 0;
+						}
+						else
+						{
+							Guardian* newGuardian = new Guardian(name, Master->PL - 1, village);
+							Master->apprentices.push_back(newGuardian);
+							AssignGuardian(map, root, newGuardian);
+						}
+					}
+					else
+					{
+						Guardian* newGuardian = new Guardian(name, pl, village);
+						Master->apprentices.push_back(newGuardian);
+						AssignGuardian(map, root, newGuardian);
+					}
 				}
 				else
 				{
 					cout << "Hubo un problema al tratar de asignar a un aprendiz a su maestro, ya que el segundo no existia" << endl
 					<< "(Asegurese de que, en el archivo de texto Guardians.txt, exista un giardian antes de que se le puedan asignar aprendices" << endl
-					<< "En otras palabras, que siempre se escriba un mastro antes que su aprendiz";
+					<< "En otras palabras, que siempre se escriba un mastro antes que su aprendiz)";
 					return 0;
 				}
 			}
@@ -297,6 +381,19 @@ int main()
 	else
 	{
 		cout << "Failed to open file: " << filename << endl;
+		return 0;
+	}
+	
+	PrintGraph(map);
+	
+	if (CheckVillages(map))
+	{
+		cout << "Todo Listo" << endl;
+	}
+	else
+	{
+		cout << "Hubo un problema al finalizar la carga de archivos, ya que hay una o mas villas que no tienen un maestro y por lo menos un aprendiz" << endl
+		<< "(Asegurese de que, en el archivo Guardians.txt, para todas las villas haya por lo menos dos Guardianes asignados a la misma villa)" << endl;
 		return 0;
 	}
 	
