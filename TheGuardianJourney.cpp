@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <fstream>
 #include <sstream>
+#include <unistd.h>
 
 using namespace std;
 
@@ -29,18 +30,32 @@ class Guardian
 		return name;
 	}
 	
+	void SetName(string name)
+	{
+		this->name = name;
+	}
+	
 	string GetVillage()
 	{
 		return village;
 	}
 	
-	void PrintGuardians() ////////////TESTEO//////////////
+	void PrintTree() ////////////TESTEO//////////////
 	{
 		cout << "Nombre: " << name << "; Nivel de Poder: " << PL << "; Villa: " << village << "; Aprendices: " << endl;
 		for (Guardian* g : apprentices)
 		{
-			g->PrintGuardians();
+			g->PrintTree();
 		} 
+	}
+	
+	void PrintGuardians()
+	{
+		for (Guardian* g : apprentices)
+		{
+			cout << "Nombre: " << g->name << "; Villa: " << g->village << endl;
+			g->PrintGuardians();
+		}
 	}
 };
 
@@ -97,42 +112,6 @@ Village* FindVillage(vector<Village*> adjList, string name) //retorna la referen
 	return NULL;
 }
 
-void PrintGraph(vector<Village*> adjList) //Funcion para imprimir las conexiones que existen entre villas //////////TESTEO/////////
-{
-	for (Village* vertex : adjList)
-	{
-		if (vertex->GetName() != "Tesla")
-		{
-			cout << "Vecinos de " << vertex->GetName() << ": ";
-			for (Village* v : vertex->adjVillages)
-			{
-				cout << v->GetName() << " ";
-			}
-			cout << "Maestro de la villa: " << vertex->master->GetName() << endl;
-			cout << "Aprendices de la villa: ";
-			for (Guardian* a : vertex->apprentices)
-			{
-				cout << a->GetName() << " ";
-			}
-			cout << endl;	
-		}
-	}
-}
-
-/*
-bool IsNumber(string s) //Funcion para saber si un string entregado es un número o no
-{
-	for (int i = 0; i < s.length(); i++ ) 
-	{
-		if (!isdigit(s[i])) 
-		{
-			return false;
-		}
-	}
-	return true;
-}
-*/
-
 Guardian* FindGuardian(Guardian* root, string name) //retorna la referencia a la instancia del Guardian que tenga el nombre entregado
 {
 	queue<Guardian*> queue;
@@ -162,6 +141,50 @@ Guardian* FindGuardian(Guardian* root, string name) //retorna la referencia a la
 	return NULL;
 }
 
+void PrintGraph(vector<Village*> adjList) //Funcion para imprimir las conexiones que existen entre villas //////////TESTEO/////////
+{
+	for (Village* vertex : adjList)
+	{
+		if (vertex->GetName() != "Tesla")
+		{
+			cout << "Vecinos de " << vertex->GetName() << ": ";
+			for (Village* v : vertex->adjVillages)
+			{
+				cout << v->GetName() << " ";
+			}
+			cout << "Maestro de la villa: " << vertex->master->GetName() << endl;
+			cout << "Aprendices de la villa: ";
+			for (Guardian* a : vertex->apprentices)
+			{
+				cout << a->GetName() << " ";
+			}
+			cout << endl;	
+		}
+	}
+}
+
+void PrintVillages(vector<string> villages) //Función para mostrar en pantalla todas las villas que existen
+{
+	cout << endl;
+	for (string v : villages)
+	{
+		cout << v << endl;
+	}
+	cout << endl;
+}
+
+bool IsNumber(string s) //Funcion para saber si un string entregado es un número o no
+{
+	for (int i = 0; i < s.length(); i++ ) 
+	{
+		if (!isdigit(s[i])) 
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 void AssignGuardian(vector<Village*> map, Guardian* root, Guardian* g)
 {
 	Village* current = FindVillage(map, g->GetVillage());
@@ -183,7 +206,7 @@ void AssignGuardian(vector<Village*> map, Guardian* root, Guardian* g)
 	}
 }
 
-bool CheckVillages(vector<Village*> map)
+bool CheckVillages(vector<Village*> map) //Función para comprobar si todas las villas tienen un maestro y por lo menos un aprendiz, excepto Tesla, ya que esa ciudad no tiene aprendicez
 {
 	for (Village* v : map)
 	{
@@ -198,9 +221,63 @@ bool CheckVillages(vector<Village*> map)
 	return true;
 }
 
+Guardian* CreateGuardian(vector<string> villages)
+{
+	string name;
+	string village;
+	
+	cout << "Ingrese el nombre de su Guardian: ";
+	cin >> name;
+	
+	PrintVillages(villages);
+	
+	while (true)
+	{
+		cout << "Ingrese el nombre de la villa de origen de su Guardian" << endl
+		<< "(Asegurese de escribir exacactamente el mismo nombre, mayusculas incluidas): ";
+		cin >> village;
+		
+		if (Exists(villages, village))
+		{
+			return new Guardian(name, 50, village);
+		}
+		
+		cout << "Esa villa no existe, por favor ingrese otra" << endl;
+	}
+}
+
+Guardian* SelectGuardian(Guardian* root)
+{
+	cout << endl;
+	root->PrintGuardians();
+	string name;
+	
+	while (true)
+	{
+		cout << endl << "Ingrese el nombre del Guardian que desea utilizar" << endl
+		<< "(Asegurese de escribir exacactamente el mismo nombre, mayusculas incluidas): ";
+		cin >> name;
+		
+		Guardian* selected = FindGuardian(root, name);
+		
+		if (selected != NULL)
+		{
+			Guardian* replace = new Guardian (selected->GetName(), 50, selected->GetVillage());
+			selected->SetName("Rex"); 
+			return replace;
+		}
+		
+		cout << "Ese Guardian no existe, por favor ingrese otro" << endl;
+	}
+}
+
 int main()
 {
 	vector<Village*> map;
+	vector<string> readVillages;
+	
+	cout << "Cargando archivos . . .   " << endl;
+	sleep(1);
 	
 	/*
 		A continuación se realiza la carga del archivo de las Villas. Para ello, se mantiene un registro
@@ -208,8 +285,6 @@ int main()
 		forma se van agregando las distintas villas, y creando aristas entre ellas, representadas por la 
 		lista de adyacencia declarada arriba (map), en base a lo entregado en el archivo Villages.txt.
 	*/
-	
-	vector<string> readVillages;
 	
 	string filename = "Villages.txt";
 	ifstream file(filename);
@@ -298,19 +373,7 @@ int main()
 		string name;
 		getline(ss, name, ',');
 		
-		string powerLevel;
-		getline(ss, powerLevel, ',');
-		int pl = stoi(powerLevel);
-		const int MaxPL = stoi(powerLevel);
-		
-		if (MaxPL <= 1)
-		{
-			cout << "Hubo un problema al leer los puntos de poder maximos, ya que, o se ingreso algo que no es un numero," << endl
-			<< "o ese numero es menor o igual a 1 (Se recomienda que sea un numero mayor o igual a 50)" << endl;
-			return 0;
-		}
-		
-		root = new Guardian(name, pl, "Tesla");
+		root = new Guardian(name, 100, "Tesla");
 		
 		while (getline(file2, line))
 		{
@@ -318,15 +381,15 @@ int main()
 			
 			getline(ss, name, ',');
 			
+			string powerLevel;
 			getline(ss, powerLevel, ',');
-			pl = stoi(powerLevel);
-			
-			if (pl <= 1)
+			if (!IsNumber(powerLevel))
 			{
 				cout << "Hubo un problema al leer los puntos de poder de uno de los guardianes, ya que, o se ingreso algo que no es un numero," << endl
-				<< "o ese numero es menor o igual a 1 (Se recomienda que sea un numero mayor o igual a 50)" << endl;
+				<< "(Se recomienda que sea un numero entre 100 y 50)" << endl;
 				return 0;
 			}
+			int pl = stoi(powerLevel);
 			
 			string master;
 			getline(ss, master, ',');
@@ -343,7 +406,8 @@ int main()
 					{
 						if (Master->PL - 1 <= 0)
 						{
-							cout << "Hubo un problema al leer los puntos de poder de uno de los guardianes, ya que ese numero es menor o igual a 0 (Se recomienda que sea un numero mayor o igual a 50)" << endl;
+							cout << "Hubo un problema al leer los puntos de poder de uno de los guardianes, ya que ese numero es muy pequeño" << endl
+							<< "(Se recomienda que sea un numero entre 100 y 50)" << endl;
 							return 0;
 						}
 						else
@@ -375,8 +439,6 @@ int main()
 				return 0;
 			}
 		}
-		
-		root->PrintGuardians();
 	}
 	else
 	{
@@ -384,17 +446,47 @@ int main()
 		return 0;
 	}
 	
-	PrintGraph(map);
-	
 	if (CheckVillages(map))
 	{
 		cout << "Todo Listo" << endl;
+		sleep(1);
 	}
 	else
 	{
 		cout << "Hubo un problema al finalizar la carga de archivos, ya que hay una o mas villas que no tienen un maestro y por lo menos un aprendiz" << endl
 		<< "(Asegurese de que, en el archivo Guardians.txt, para todas las villas haya por lo menos dos Guardianes asignados a la misma villa)" << endl;
 		return 0;
+	}
+	
+	Guardian* player;
+	int op;
+	bool done = false;
+	//Bienvenida y explicación del juego (dar opción si desea ver el tutorial antes de empezar [Eres nuevo o ya sabes jugar?])
+	
+	while (!done)
+	{
+		cout << endl << "Desea crear un personaje o seleccionar uno preexistente?" << endl
+		<< "Ingrese <1> si dese crear, <2> si desea seleccionar: ";
+		cin >> op;
+		
+		if (op == 1)
+		{
+			player = CreateGuardian(readVillages);
+			cout << endl << "Guardian Creado Exitosamente" << endl;
+			done = true;
+		}
+		else if (op == 2)
+		{
+			player = SelectGuardian(root);
+			cout << endl << "Guardian Seleccionado Exitosamente" << endl;
+			done = true;
+		}
+		else
+		{
+			cout << "Ese valor no es valido, por favor ingrese otro" << endl;
+			cin.clear();
+			cin.ignore();
+		}
 	}
 	
 	return 0;
