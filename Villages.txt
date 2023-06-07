@@ -1,4 +1,4 @@
-Capital City,Tesla
+Tesalia
 Capital City,Forest Village
 Forest Village,Mountain Village
 Mountain Village,Capital City
