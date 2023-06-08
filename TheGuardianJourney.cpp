@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <list>
 #include <unordered_map>
 #include <fstream>
 #include <sstream>
@@ -50,7 +51,7 @@ class Guardian
 		} 
 	}
 	
-	void PrintGuardians() //Función para imprimir a todos los guardianes, menos al "Jefe"
+	void PrintGuardians() //Función para imprimir a todos los guardianes, menos al "Jefe" (EasterEgg)
 	{
 		for (Guardian* g : apprentices)
 		{
@@ -74,10 +75,12 @@ class Village
 	Guardian* master;
 	vector<Guardian*> apprentices;
 	vector<Village*> adjVillages; //registro de las conexiones que existen entre villas (emulan un grafo)
+	int pointsToGive;
 	
 	Village (string name)
 	{
 		this->name = name;
+		pointsToGive = 3;
 		master = NULL;
 	}
 	
@@ -90,6 +93,24 @@ class Village
 	{
 		u->adjVillages.push_back(v);
 		v->adjVillages.push_back(u);
+	}
+};
+
+class Record
+{
+	public:
+		
+	Guardian* opponent;
+	bool result;
+	int pointsGained;
+	int pointsAccumulated;
+	
+	Record(Guardian* opponent, bool result, int pointsGained, int pointsAccumulated)
+	{
+		this->opponent = opponent;
+		this->result = result;
+		this->pointsGained = pointsGained;
+		this->pointsAccumulated = pointsAccumulated;
 	}
 };
 
@@ -366,9 +387,11 @@ Guardian* SelectOpponent(vector<Guardian*> options) //Función para seleccionar a
 	}
 }
 
-void Training(Guardian* opponent, Guardian* player, bool master) //Funcion en la que se simula el combate entre el jugador y su oponente. Si este es el maestro, el nivel de dificultad aumenta, pero tambien se ganan más puntos
+Record* Training(Guardian* opponent, Guardian* player, bool master, Village* current) //Funcion en la que se simula el combate entre el jugador y su oponente. Si este es el maestro, el nivel de dificultad aumenta, pero tambien se ganan más puntos
 {
 	int win;
+	int pointsGained = 0;
+	
 	if (master)
 	{
 		win = 4;
@@ -378,28 +401,238 @@ void Training(Guardian* opponent, Guardian* player, bool master) //Funcion en la
 		win = 2;
 	}
 	
-	cout << "\tInicia el Combate!" << endl << "Tu oponente: ";
+	cout << endl << "\tInicia el Combate!" << endl << "Tu oponente: ";
 	opponent->PrintGuardian();
 	cout << "Presiona una tecla para lanzar el dado" << endl
 	<< "(Necesitas un numero mayor que " << win << " para ganar la pelea)" << endl;
-	fflush(stdin);
 	getchar(); //esto está pensado únicamente para hacer una pausa y que haya interacción por parte del usuario
+	fflush(stdin);
 	int dado = rand() % 6 + 1;
 	cout << dado << endl;
 	
 	if (dado > win)
 	{
-		cout << endl << "\tFelicidades, ganaste el combate!!" << endl
-		<< "Por la experiencia vivida tu Nivel de Poder ha incrementado en " << win/2 << " puntos" << endl;
-		player->PL += win/2;
+		cout << endl << "\tFelicidades, ganaste el combate!!" << endl;
+		if (current->pointsToGive - win/2 >= 0)
+		{
+			current->pointsToGive -= win/2;
+			if (player->PL + win/2 > 100)
+			{
+				player->PL = 100;
+				cout << "Tu Nivel de Poder ha llegado al maximo, deberias considerar ir a enfrentar al jefe final..." << endl;
+			}
+			else
+			{
+				cout << "Por la experiencia vivida tu Nivel de Poder ha incrementado en " << win/2 << " puntos" << endl;
+				player->PL += win/2;
+				pointsGained = win/2;
+			}
+		}
+		else
+		{
+			if (master && current->pointsToGive == 1)
+			{
+				current->pointsToGive--;
+				player->PL++;
+				pointsGained++;
+			}
+			cout << "Ya no puedes obtener mas Puntos de Poder de esta villa, has alcanzado el maximo posible (3)" << endl;
+		}
+		
+		cout << "Nivel de Poder: " << player->PL << endl;
+		getchar();
+		fflush(stdin);
+		return new Record(opponent, true, pointsGained, player->PL);
 	}
 	else
 	{
 		cout << endl << "\tPerdiste el combate" << endl
 		<< "Mejor suerte para la proxima, tu Nivel de Poder se mantiene intacto" << endl;
+		cout << "Nivel de Poder: " << player->PL << endl;
+		getchar();
+		fflush(stdin);
+		return new Record(opponent, true, pointsGained, player->PL);
+	}
+}
+
+bool PrintAdjVillages(vector<Village*> adjVillages)
+{
+	if (adjVillages.size() == 0)
+	{
+		return false;
 	}
 	
-	cout << "Nivel de Poder: " << player->PL << endl;
+	cout << endl;
+	for (Village* adj : adjVillages)
+	{
+		cout << "- " << adj->GetName() << endl;
+	}
+	cout << endl;
+	return true;
+}
+
+Village* Travel(Village* current, Guardian* player)
+{
+	string name;
+	
+	if (PrintAdjVillages(current->adjVillages))
+	{
+		while (true)
+		{
+			cout << "A que villa deseas viajar? Ingresa el nombre de tu eleccion: ";
+			getline(cin, name);
+			while (name.length() == 0)
+			{
+				getline(cin, name);
+			}
+			
+			Village* adj = FindVillage(current->adjVillages, name);
+			
+			if (adj != NULL)
+			{
+				player->PL++;
+				if (player->PL > 100)
+				{
+					player->PL = 100;
+					cout << "Tu Nivel de Poder ha llegado al maximo, deberias considerar ir a enfrentar al jefe final..." << endl;
+				}
+				else
+				{
+					cout << endl << "Por la experiencia ganada al superar los obstaculos del viaje, tu nivel de poder a aumentado en 1" << endl;
+				}
+				cout << "Nivel de Poder: " << player->PL << endl;
+				getchar();
+				fflush(stdin);
+				return adj;
+			}
+			else
+			{
+				cout << "Esa villa no existe, o no esta dentro de las opciones entregadas" << endl
+				<< "Por favor ingrese otro nombre" << endl;
+			}
+		}
+	}
+	else
+	{
+		cout << "Esta villa no esta conectada a ninguna otra villa, para viajar deberas crear un portal usando Alquimia" << endl;
+		getchar();
+		getchar();
+		fflush(stdin);
+		return current;
+	}
+}
+
+vector<Village*> PrintNotAdjVillages(Village* current, vector<Village*> map)
+{
+	vector<Village*> notAdjVillages;
+	
+	for (Village* v : map)
+	{
+		bool connected = false;
+		
+		if (v->GetName() == current->GetName())
+		{
+			continue;
+		}
+		
+		for (Village* adj : current->adjVillages)
+		{
+			if (v->GetName() == adj->GetName() )
+			{
+				connected = true;
+				break;
+			}
+		}
+		
+		if (!connected)
+		{
+			cout << "- " << v->GetName() << endl;
+			notAdjVillages.push_back(v);
+		}
+	}
+	
+	return notAdjVillages;
+}
+
+void CreatePortal(Guardian* player, Village* current, vector<Village*> map)
+{
+	string name;
+	vector<Village*> notAdjVillages = PrintNotAdjVillages(current, map);
+	
+	while (true)
+	{
+		cout << "Ingresa el nombre de la villa con la que quieres conectar tu villa actual: ";
+		getline(cin, name);
+		while (name.length() == 0)
+		{
+			getline(cin, name);
+		}
+		
+		Village* village = FindVillage(notAdjVillages, name);
+		
+		if (village != NULL)
+		{
+			int cost = rand() % 3 + 2;
+			if (player->PL - cost >= 0)
+			{
+				player->PL -= cost;
+				current->AddEdge(current, village);
+				cout << endl << "Has creado un portal desde " << current->GetName() << " hasta " << village->GetName() << endl
+				<< "Pero has gastado " << cost << " Puntos de Poder para lograrlo" << endl;
+				cout << "Nivel de Poder: " << player->PL << endl;
+			}
+			else
+			{
+				cout << "No tienes los Puntos de Poder suficientes para crear un portal" << endl
+				<< "Viaja o entrena maspara acumular los necesarios" << endl;
+			}
+			getchar();
+			fflush(stdin);
+			return;
+		}
+		else
+		{
+			cout << "Esa villa no existe, o ya esta conectada a tu villa actual, por favor ingrese otro nombre" << endl;
+		}
+	}
+}
+
+void PrintJourney(list<string> journey, Guardian* player)
+{
+	for (string v : journey)
+	{
+		if (v == journey.front())
+		{
+			cout << endl << "El viaje de " << player->GetName() << " inicio en " << v << ", y luego su aventura siguio por: " << endl;
+			continue;
+		}
+		cout << v << endl;
+	}
+	cout << "En ese orden" << endl;
+	getchar();
+	fflush(stdin);
+}
+
+void PrintHistory(list<Record*> history, Guardian* player)
+{
+	cout << endl << player->GetName() << " ha peleado incontables batallas" << endl 
+	<< "y como buen candidato a convertirse en Guardian, las recuerda todas: " << endl;
+	for (Record* r : history)
+	{
+		cout << endl << "Se enfrento a " << r->opponent->GetName() << " una vez en " << r->opponent->GetVillage();
+		if (r->result)
+		{
+			cout << " y gano ese combate..." << endl;
+		}
+		else
+		{
+			cout << " y perdio ese combate..." << endl;
+		}
+		cout << "...Con lo cual obtuvo " << r->pointsGained << " Puntos de Poder"
+		<< " terminando con un total de " << r->pointsAccumulated << " Puntos" << endl;
+	}
+	getchar();
+	fflush(stdin);
 }
 
 int main()
@@ -568,6 +801,8 @@ int main()
 				return 0;
 			}
 		}
+		
+		file.close();
 	}
 	else
 	{
@@ -593,7 +828,8 @@ int main()
 	
 	Guardian* player;
 	Village* current;
-	vector<string> journey;
+	list<string> journey;
+	list<Record*> history;
 	int op;
 	bool done = false;
 	
@@ -633,7 +869,6 @@ int main()
 	current = FindVillage(map, player->GetVillage());
 	
 	//Pequeño texto épico de inicio del viaje
-	
 	journey.push_back(current->GetName());
 	done = false;
 	
@@ -671,7 +906,7 @@ int main()
 				}
 				else
 				{
-					Training(SelectOpponent(current->apprentices), player, false);
+					history.push_back(Training(SelectOpponent(current->apprentices), player, false, current));
 				}
 				break;
 			
@@ -680,23 +915,29 @@ int main()
 				{
 					cout << "Esa Opcion no es valida, por favor ingrese otra" << endl
 					<< "(Actualmente te encuentras en " << map.front()->GetName() << ", y aqui no hay aprendices)" << endl;
+					getchar();
+					fflush(stdin);
 				}
 				else
 				{
-					Training(current->master, player, true);
+					history.push_back(Training(current->master, player, true, current));
 				}
 				break;
 			
 			case 3:
+				current = Travel(current, player);
 				break;
 			
 			case 4:
+				CreatePortal(player, current, map);
 				break;
 			
 			case 5:
+				PrintJourney(journey, player);
 				break;
 			
 			case 6:
+				PrintHistory(history, player);
 				break;
 				
 			case 7:
