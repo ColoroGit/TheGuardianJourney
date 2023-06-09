@@ -17,8 +17,8 @@ class Guardian
 	string village;
 	
 	public: 
-	int PL; //Nivel de Poder (Power Level en inglés, de ahí el nombre)
-	vector<Guardian*> apprentices; //un registro que representa la jerarquía maestro-aprendiz dentro del programa (un árbol general)
+	int PL; //Nivel de Poder (Power Level en inglï¿½s, de ahï¿½ el nombre)
+	vector<Guardian*> apprentices; //un registro que representa la jerarquï¿½a maestro-aprendiz dentro del programa (un ï¿½rbol general)
 	
 	Guardian(string name, int pl, string village)
 	{
@@ -51,7 +51,7 @@ class Guardian
 		} 
 	}
 	
-	void PrintGuardians() //Función para imprimir a todos los guardianes, menos al "Jefe" (EasterEgg)
+	void PrintGuardians() //Funcion para imprimir a todos los guardianes, menos al "Jefe" (EasterEgg)
 	{
 		for (Guardian* g : apprentices)
 		{
@@ -76,6 +76,7 @@ class Village
 	vector<Guardian*> apprentices;
 	vector<Village*> adjVillages; //registro de las conexiones que existen entre villas (emulan un grafo)
 	int pointsToGive;
+	bool visited;
 	
 	Village (string name)
 	{
@@ -89,7 +90,7 @@ class Village
 		return name;
 	}
 	
-	void AddEdge(Village* u, Village* v) //Crea una conexión entre una ciudad y otra
+	void AddEdge(Village* u, Village* v) //Crea una conexiï¿½n entre una ciudad y otra
 	{
 		u->adjVillages.push_back(v);
 		v->adjVillages.push_back(u);
@@ -114,7 +115,7 @@ class Record
 	}
 };
 
-bool Exists(vector<string> readVillages, string name) //Función que se utiliza especificamente para saber si ya se ha leido el nombre de una villa
+bool Exists(vector<string> readVillages, string name) //Funciï¿½n que se utiliza especificamente para saber si ya se ha leido el nombre de una villa
 {
 	for (string v : readVillages)
 	{
@@ -203,7 +204,7 @@ void PrintMap(vector<Village*> map) ///////TESTEO/////////
 	}
 }
 
-void PrintVillages(vector<string> villages) //Función para mostrar en pantalla todas las villas que existen
+void PrintVillages(vector<string> villages) //Funciï¿½n para mostrar en pantalla todas las villas que existen
 {
 	cout << endl;
 	for (string v : villages)
@@ -213,7 +214,7 @@ void PrintVillages(vector<string> villages) //Función para mostrar en pantalla t
 	cout << endl;
 }
 
-bool IsNumber(string s) //Funcion para saber si un string entregado es un número o no
+bool IsNumber(string s) //Funcion para saber si un string entregado es un nï¿½mero o no
 {
 	for (int i = 0; i < s.length(); i++ ) 
 	{
@@ -225,7 +226,7 @@ bool IsNumber(string s) //Funcion para saber si un string entregado es un número
 	return true;
 }
 
-void AssignGuardian(vector<Village*> map, Guardian* root, Guardian* g) //Función para asignar a los guardianes a sus respectivas villas, teniendo en cuenta que quien tenga el mayor Nivel de Poder será el Maestro de la villa
+void AssignGuardian(vector<Village*> map, Guardian* root, Guardian* g) //Funciï¿½n para asignar a los guardianes a sus respectivas villas, teniendo en cuenta que quien tenga el mayor Nivel de Poder serï¿½ el Maestro de la villa
 {
 	Village* current = FindVillage(map, g->GetVillage());
 	
@@ -246,7 +247,7 @@ void AssignGuardian(vector<Village*> map, Guardian* root, Guardian* g) //Función
 	}
 }
 
-bool CheckVillages(vector<Village*> map) //Función para comprobar si todas las villas tienen un maestro y por lo menos un aprendiz, excepto la villa final, ya que esa ciudad no tiene aprendicez
+bool CheckVillages(vector<Village*> map) //Funciï¿½n para comprobar si todas las villas tienen un maestro y por lo menos un aprendiz, excepto la villa final, ya que esa ciudad no tiene aprendicez
 {
 	for (Village* v : map)
 	{
@@ -261,7 +262,7 @@ bool CheckVillages(vector<Village*> map) //Función para comprobar si todas las v
 	return true;
 }
 
-Guardian* CreateGuardian(vector<string> villages) //Función para crear a un Guardian. Para ello se pide el nombre y la ciudad en la que quiere empezar. Sus puntos de poder comienzan en 50 (la mitad del máximo posible)
+Guardian* CreateGuardian(vector<string> villages) //Funciï¿½n para crear a un Guardian. Para ello se pide el nombre y la ciudad en la que quiere empezar. Sus puntos de poder comienzan en 50 (la mitad del mï¿½ximo posible)
 {
 	string name;
 	string village;
@@ -294,7 +295,7 @@ Guardian* CreateGuardian(vector<string> villages) //Función para crear a un Guar
 	}
 }
 
-Guardian* SelectGuardian(Guardian* root) //Función para seleccionar un guardian de los que ya existen. Para que no aparezca un clon del guardian seleccionado, este se reemplaza por Rex, quien conserva los mismos atributos que el personaje elegido, y este último pasa a ser el personaje del jugador, pero con los puntos de poder al 50
+Guardian* SelectGuardian(Guardian* root) //Funciï¿½n para seleccionar un guardian de los que ya existen. Para que no aparezca un clon del guardian seleccionado, este se reemplaza por Rex, quien conserva los mismos atributos que el personaje elegido, y este ï¿½ltimo pasa a ser el personaje del jugador, pero con los puntos de poder al 50
 {
 	cout << endl;
 	root->PrintGuardians();
@@ -319,7 +320,7 @@ Guardian* SelectGuardian(Guardian* root) //Función para seleccionar un guardian 
 	}
 }
 
-string RecommendedOpponent(vector<Guardian*> options) //Función para recomendar al aprendiz con menor Nivel de Poder. Se devuelve el nombre de este guardian para mostrarselo al jugador
+string RecommendedOpponent(vector<Guardian*> options) //Funciï¿½n para recomendar al aprendiz con menor Nivel de Poder. Se devuelve el nombre de este guardian para mostrarselo al jugador
 {
 	Guardian* recommended = options.front();
 	
@@ -334,7 +335,7 @@ string RecommendedOpponent(vector<Guardian*> options) //Función para recomendar 
 	return recommended->GetName();
 }
 
-void ShowApprentices(vector<Guardian*> apprentices) //Función para mostrar todos los aprendices de la lista entregada
+void ShowApprentices(vector<Guardian*> apprentices) //Funciï¿½n para mostrar todos los aprendices de la lista entregada
 {
 	cout << endl;
 	for (Guardian* a : apprentices)
@@ -344,7 +345,7 @@ void ShowApprentices(vector<Guardian*> apprentices) //Función para mostrar todos
 	cout << endl;
 }
 
-Guardian* FindApprentice(vector<Guardian*> apprentices, string name) //Función para devolver al guardian que tenga el nombre entregado
+Guardian* FindApprentice(vector<Guardian*> apprentices, string name) //Funciï¿½n para devolver al guardian que tenga el nombre entregado
 {
 	for (Guardian* a : apprentices)
 	{
@@ -356,7 +357,7 @@ Guardian* FindApprentice(vector<Guardian*> apprentices, string name) //Función p
 	return NULL;
 }
 
-Guardian* SelectOpponent(vector<Guardian*> options) //Función para seleccionar al oponente con el cual enfrentarse, el cual es retornado
+Guardian* SelectOpponent(vector<Guardian*> options) //Funciï¿½n para seleccionar al oponente con el cual enfrentarse, el cual es retornado
 {
 	string name;
 	
@@ -387,7 +388,7 @@ Guardian* SelectOpponent(vector<Guardian*> options) //Función para seleccionar a
 	}
 }
 
-Record* Training(Guardian* opponent, Guardian* player, bool master, Village* current) //Funcion en la que se simula el combate entre el jugador y su oponente. Si este es el maestro, el nivel de dificultad aumenta, pero tambien se ganan más puntos
+Record* Training(Guardian* opponent, Guardian* player, bool master, Village* current) //Funcion en la que se simula el combate entre el jugador y su oponente. Si este es el maestro, el nivel de dificultad aumenta, pero tambien se ganan mï¿½s puntos
 {
 	int win;
 	int pointsGained = 0;
@@ -405,7 +406,11 @@ Record* Training(Guardian* opponent, Guardian* player, bool master, Village* cur
 	opponent->PrintGuardian();
 	cout << "Presiona una tecla para lanzar el dado" << endl
 	<< "(Necesitas un numero mayor que " << win << " para ganar la pelea)" << endl;
-	getchar(); //esto está pensado únicamente para hacer una pausa y que haya interacción por parte del usuario
+	if (master)
+	{
+		getchar();	
+	}
+	getchar(); 
 	fflush(stdin);
 	int dado = rand() % 6 + 1;
 	cout << dado << endl;
@@ -455,7 +460,7 @@ Record* Training(Guardian* opponent, Guardian* player, bool master, Village* cur
 	}
 }
 
-bool PrintAdjVillages(vector<Village*> adjVillages)
+bool PrintAdjVillages(vector<Village*> adjVillages) //Funcion para mostrar las ciudades adyacentes, que se utiliza especificamente para el menu de Viaje
 {
 	if (adjVillages.size() == 0)
 	{
@@ -471,7 +476,7 @@ bool PrintAdjVillages(vector<Village*> adjVillages)
 	return true;
 }
 
-Village* Travel(Village* current, Guardian* player)
+Village* Travel(Village* current, Guardian* player) //Funcion para cambiar de una villa a otra
 {
 	string name;
 	
@@ -514,7 +519,7 @@ Village* Travel(Village* current, Guardian* player)
 	}
 	else
 	{
-		cout << "Esta villa no esta conectada a ninguna otra villa, para viajar deberas crear un portal usando Alquimia" << endl;
+		cout << endl << "Esta villa no esta conectada a ninguna otra villa, para viajar deberas crear un portal usando Alquimia" << endl;
 		getchar();
 		getchar();
 		fflush(stdin);
@@ -522,10 +527,11 @@ Village* Travel(Village* current, Guardian* player)
 	}
 }
 
-vector<Village*> PrintNotAdjVillages(Village* current, vector<Village*> map)
+vector<Village*> PrintNotAdjVillages(Village* current, vector<Village*> map) //Funcion para mostrar en pantalla las villas que no estan conectadas a la villa actual
 {
 	vector<Village*> notAdjVillages;
 	
+	cout << endl;
 	for (Village* v : map)
 	{
 		bool connected = false;
@@ -550,11 +556,12 @@ vector<Village*> PrintNotAdjVillages(Village* current, vector<Village*> map)
 			notAdjVillages.push_back(v);
 		}
 	}
+	cout << endl;
 	
 	return notAdjVillages;
 }
 
-void CreatePortal(Guardian* player, Village* current, vector<Village*> map)
+void CreatePortal(Guardian* player, Village* current, vector<Village*> map) //Funcion para crear un camino entre una villa y otra
 {
 	string name;
 	vector<Village*> notAdjVillages = PrintNotAdjVillages(current, map);
@@ -597,7 +604,7 @@ void CreatePortal(Guardian* player, Village* current, vector<Village*> map)
 	}
 }
 
-void PrintJourney(list<string> journey, Guardian* player)
+void PrintJourney(list<string> journey, Guardian* player) //Funcion para mostrar el recorrido de villas realizado por el jugador
 {
 	for (string v : journey)
 	{
@@ -610,10 +617,11 @@ void PrintJourney(list<string> journey, Guardian* player)
 	}
 	cout << "En ese orden" << endl;
 	getchar();
+	getchar();
 	fflush(stdin);
 }
 
-void PrintHistory(list<Record*> history, Guardian* player)
+void PrintHistory(list<Record*> history, Guardian* player) //Funcion para mostrar el historial de combates del jugador
 {
 	cout << endl << player->GetName() << " ha peleado incontables batallas" << endl 
 	<< "y como buen candidato a convertirse en Guardian, las recuerda todas: " << endl;
@@ -632,7 +640,55 @@ void PrintHistory(list<Record*> history, Guardian* player)
 		<< " terminando con un total de " << r->pointsAccumulated << " Puntos" << endl;
 	}
 	getchar();
+	getchar();
 	fflush(stdin);
+}
+
+bool AllVillagesVisited(vector<Village*> map) //Funcion para comprobar si todas las villas han sido visitadas
+{
+	for (Village* v : map)
+	{
+		if (!v->visited)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+void PrintFinalFight(Guardian* boss, Guardian* player) //Funcion que muestra el combate final entre el jugador y el jefe
+{
+	boss->PrintGuardian();
+	cout << endl << "\t\t V/S " << endl;
+	player->PrintGuardian();
+}
+
+void FinalFight(Guardian* boss, Guardian* player, list<string> journey, list<Record*> history) //Ultima funcion que hace las de conclusion para la aventura vivida por el Guardiï¿½n del jugador
+{
+	string op;
+	
+	cout << endl << "Finalmente, despues de todos los entrenamientos y viajes que " << player->GetName() << " ha vivido durante su aventura," << endl
+	<< "llego la hora de enfrentarse a " << boss->GetName() << " para convertirse en Guardian..." << endl;
+	PrintFinalFight(boss, player);
+	getchar();
+	getchar();
+	fflush(stdin);
+	cout << endl << "\t...Felicidades, has completado el juego" << endl
+	<< endl << "Te gustaria ver tu recorrido como aprendiz? Ingresa <1> para verlo: ";
+	cin >> op;
+	
+	if (op == "1")
+	{
+		PrintJourney(journey, player);
+	}
+	
+	cout << endl << "Te gustaria ver tu historial de combate? Ingresa <1> para verlo: ";
+	cin >> op;
+	
+	if (op == "1")
+	{
+		PrintHistory(history, player);
+	}
 }
 
 int main()
@@ -644,7 +700,7 @@ int main()
 	sleep(1);
 	
 	/*
-		A continuación se realiza la carga del archivo de las Villas. Para ello, se mantiene un registro
+		A continuacion se realiza la carga del archivo de las Villas. Para ello, se mantiene un registro
 		sobre los nombres de las villas que ya han sido ingresadas y creadas, para no repetrilas, y de esa
 		forma se van agregando las distintas villas, y creando aristas entre ellas, representadas por la 
 		lista de adyacencia declarada arriba (map), en base a lo entregado en el archivo Villages.txt.
@@ -714,13 +770,20 @@ int main()
 		return 0;
 	}
 	
+	if (map.size() < 3)
+	{
+		cout << "Hubo un problema al leer las villas, ya que en total son menos de 3" << endl
+		<< "(Se recomienda que sean por lo menos 3)" << endl;
+		return 0;
+	}
+	
 	/*
-		Carga del archivo de Guardianes: Se parte por hacer la carga del "Jefe Final", que en el caso específico del proyecto es
-		Stormheart, según sus puntos de poder se define el máximo posible. Posteriormente se le asignan sus aprendices según
-		se vayan entregando en el archivo Guardians.txt, y por último, se asignan a sus respectivas villas.
+		Carga del archivo de Guardianes: Se parte por hacer la carga del "Jefe Final", que en el caso especifico del proyecto es
+		Stormheart, segun sus puntos de poder se define el maximo posible. Posteriormente se le asignan sus aprendices segun
+		se vayan entregando en el archivo Guardians.txt, y por ultimo, se asignan a sus respectivas villas.
 	*/
 	
-	Guardian* root; //Arbol para representar la jerarquía maestro/aprendiz de los Guardianes
+	Guardian* root; //Arbol para representar la jerarquï¿½a maestro/aprendiz de los Guardianes
 	
 	filename = "Guardians.txt";
 	ifstream file2(filename);
@@ -768,7 +831,7 @@ int main()
 					{
 						if (Master->PL - 1 <= 0)
 						{
-							cout << "Hubo un problema al leer los puntos de poder de uno de los guardianes, ya que ese numero es muy pequeño" << endl
+							cout << "Hubo un problema al leer los puntos de poder de uno de los guardianes, ya que ese numero es muy pequeï¿½o" << endl
 							<< "(Se recomienda que sea un numero entre 100 y 50)" << endl;
 							return 0;
 						}
@@ -823,7 +886,7 @@ int main()
 	}
 	
 	/*
-		Inicio del juego
+		Inicio del juego: Bienvenida y explicacion del juego
 	*/
 	
 	Guardian* player;
@@ -833,10 +896,31 @@ int main()
 	int op;
 	bool done = false;
 	
-	//Bienvenida y explicación del juego (dar opción si desea ver el tutorial antes de empezar [Eres nuevo o ya sabes jugar?])
+	cout << "\tBienvenido a The Guardian Journey" << endl
+	<< "Eres nuev@ o ya sabes jugar? Ingresa <1> si te gustaria ver una pequena explicacion del juego: ";
+	cin >> op;
+	
+	if (op == 1)
+	{
+		cout << endl << "The Guardian Journey es un pequeno juego que busca solucionar una problematica entregada como proyecto" << endl
+		<< "de unidad para la asignatura Algoritmo y Estructuras de Datos, el cual usa los mismos para crear" << endl
+		<< "el programa que utilizara a continuacion" << endl << endl
+		<< "En el juego tendras la opcion de crear o seleccionar un Guardian en base a los personajes cargados del archivo" << endl
+		<< "Guardian.txt, y posteriormente podras viajar, enfrentarte a aprendices o maestros para acumular Puntos o Nivel de Poder," << endl
+		<< "con el objetivo de llegar a la ciudad del jefe final y vencerlo" << endl 
+		<< "Tambien podras crear caminos entre ciudades desconectadas usando alquimia," << endl
+		<< "lo cual gasta entre 2 y 4 Puntos de Poder" << endl << endl
+		<< "Ademas, podras ver las ciudades por las que has viajado a lo largo del juego y tu historial de combate" << endl << endl
+		<< "Para jugar solo debera seguir las instrucciones que aparecen en pantalla e ingresar por teclado sus opciones" << endl
+		<< "Para mas informacion, revise el archivo README adjunto al mismo programa que esta utilizando" << endl;
+	}
+	
+	cin.clear();
+	cin.ignore();
+	fflush(stdin);
 	
 	/*
-		Selección o creación del personaje: En esta sección se pregunta al usuario qué desea hacer y segun eso ingresa el
+		SelecciÃ³n o creaciÃ³n de personaje: En esta secciÃ³n se pregunta al usuario quÃ© desea hacer y segun eso ingresa el
 		nombre del nuevo guardia que quiere crear, y si no se reemplaza al jugador seleccionado por un guardian interno
 	*/
 	while (!done)
@@ -863,21 +947,37 @@ int main()
 			cout << "Esa opcion no es valida, por favor ingrese otra" << endl;
 			cin.clear();
 			cin.ignore();
+			fflush(stdin);
 		}
 	}
 	
-	current = FindVillage(map, player->GetVillage());
+	cout << endl << "Hoy es el gran dia que los videntes profetizaban, el nacimiento de una leyenda, y es que" << endl
+	<< player->GetName() << " inicia su viaje para convertirse en el mejor Guardian del nuevo mundo" << endl << endl
+	<< "Este es el comienzo de su aventura, en la que debera acumular Puntos de Poder para poder enfrentarse a " << endl
+	<< root->GetName() << ", que se encuentra en " << map.front()->GetName() << ", y obtener el titulo de Guardian" << endl << endl
+	<< "\tSera capaz nuestro valiente aprendiz de lograr su cometido..?" << endl << endl
+	<< "Presiona <Enter> para continuar";
+	getchar();
+	getchar(); //esto estÃ¡ pensado Ãºnicamente para hacer una pausa y que haya interacciÃ³n por parte del usuario
+	fflush(stdin);
 	
-	//Pequeño texto épico de inicio del viaje
+	current = FindVillage(map, player->GetVillage());
 	journey.push_back(current->GetName());
 	done = false;
 	
-	while (!done /* || Jefe enfrentado*/)
+	/*
+		En la siguiente secciÃ³n se comienzan a mostrar todas las acciones que el jugador puede realizar durante el juego, 
+		haciendo la distincion sobre si se encuentra en la villa del jefe final o no.
+	*/
+	
+	while (!done)
 	{
 		if (current->GetName() != journey.back())
 		{
 			journey.push_back(current->GetName());
 		}
+		
+		current->visited = true;
 		
 		cout << endl << "\t\tTe encuentras actualmente en " << current->GetName() << endl << endl
 		<< "\tQue deseas hacer?" << endl;
@@ -902,7 +1002,20 @@ int main()
 			case 1:
 				if (current->GetName() == map.front()->GetName())
 				{
-					//Comprobar si se cumplen las condiciones para pelear contra el jefe
+					if (player->PL >= 90 || AllVillagesVisited(map))
+					{
+						FinalFight(root, player, journey, history);
+						done = true;
+					}
+					else
+					{
+						cout << endl << "Todavia no tienes la experiencia necesaria para enfrentarte a " << root->GetName() << endl
+						<< "(Necesitas haber visitado todas las villas o tener un Nivel de Poder mayor o igual a 90)" << endl
+						<< "Vuelve mas tarde cuando estes preparado" << endl;
+						getchar();
+						getchar();
+						fflush(stdin);
+					}
 				}
 				else
 				{
@@ -915,6 +1028,7 @@ int main()
 				{
 					cout << "Esa Opcion no es valida, por favor ingrese otra" << endl
 					<< "(Actualmente te encuentras en " << map.front()->GetName() << ", y aqui no hay aprendices)" << endl;
+					getchar();
 					getchar();
 					fflush(stdin);
 				}
@@ -951,6 +1065,11 @@ int main()
 				break;
 		}
 	}
+	
+	cout << endl << "\tGracias por jugar The Guardian Journey" << endl;
+	getchar();
+	getchar();
+	fflush(stdin);
 	
 	return 0;
 }
