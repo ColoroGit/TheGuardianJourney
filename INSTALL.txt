@@ -1,0 +1,5 @@
+Para hacer uso del programa, deberá descomprimir la carpeta que contiene los archivos "Guardians.txt", "Villages.txt", "INSTALL.txt", "README.md" y "TheGuardianJourney.cpp", en una única carpeta que pueda reconocer y conozca su ruta de acceso. 
+
+A continuación, deberá acceder a su consola de Windows (Windows PowerShell), e ir a la dirección de la carpeta en la que se encuentra el programa. Posterior a eso deberá correr el programa escribiendo el siguiente texto: ".\TheGuardianJourney".
+
+Una vez llegados a este punto iniciará el juego, y podrá interactuar desde la consola. Simplemente siga las instrucciones del mismo programa, y diviértase con la experiencia.
