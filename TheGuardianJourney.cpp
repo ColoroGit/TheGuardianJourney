@@ -926,7 +926,7 @@ int main()
 	while (!done)
 	{
 		
-		cout << endl << "Desea crear un personaje o seleccionar uno preexistente?" << endl
+		cout << endl << endl << "Desea crear un personaje o seleccionar uno preexistente?" << endl
 		<< "Ingrese <1> si dese crear, <2> si desea seleccionar: ";
 		cin >> op;
 		
