@@ -115,6 +115,16 @@ class Record
 	}
 };
 
+void Pause(bool twice) //Esta función está pensada únicamente para hacer una pausa y que haya interacción por parte del usuario
+{
+	if (twice)
+	{
+		getchar();
+	}
+	getchar();
+	fflush(stdin);
+}
+
 bool Exists(vector<string> readVillages, string name) //Funci�n que se utiliza especificamente para saber si ya se ha leido el nombre de una villa
 {
 	for (string v : readVillages)
@@ -406,12 +416,7 @@ Record* Training(Guardian* opponent, Guardian* player, bool master, Village* cur
 	opponent->PrintGuardian();
 	cout << "Presiona una tecla para lanzar el dado" << endl
 	<< "(Necesitas un numero mayor que " << win << " para ganar la pelea)" << endl;
-	if (master)
-	{
-		getchar();	
-	}
-	getchar(); 
-	fflush(stdin);
+	Pause(master);
 	int dado = rand() % 6 + 1;
 	cout << dado << endl;
 	
@@ -445,8 +450,7 @@ Record* Training(Guardian* opponent, Guardian* player, bool master, Village* cur
 		}
 		
 		cout << "Nivel de Poder: " << player->PL << endl;
-		getchar();
-		fflush(stdin);
+		Pause(false);
 		return new Record(opponent, true, pointsGained, player->PL);
 	}
 	else
@@ -454,8 +458,7 @@ Record* Training(Guardian* opponent, Guardian* player, bool master, Village* cur
 		cout << endl << "\tPerdiste el combate" << endl
 		<< "Mejor suerte para la proxima, tu Nivel de Poder se mantiene intacto" << endl;
 		cout << "Nivel de Poder: " << player->PL << endl;
-		getchar();
-		fflush(stdin);
+		Pause(false);
 		return new Record(opponent, true, pointsGained, player->PL);
 	}
 }
@@ -506,8 +509,7 @@ Village* Travel(Village* current, Guardian* player) //Funcion para cambiar de un
 					cout << endl << "Por la experiencia ganada al superar los obstaculos del viaje, tu nivel de poder a aumentado en 1" << endl;
 				}
 				cout << "Nivel de Poder: " << player->PL << endl;
-				getchar();
-				fflush(stdin);
+				Pause(false);
 				return adj;
 			}
 			else
@@ -520,9 +522,7 @@ Village* Travel(Village* current, Guardian* player) //Funcion para cambiar de un
 	else
 	{
 		cout << endl << "Esta villa no esta conectada a ninguna otra villa, para viajar deberas crear un portal usando Alquimia" << endl;
-		getchar();
-		getchar();
-		fflush(stdin);
+		Pause(true);
 		return current;
 	}
 }
@@ -593,8 +593,7 @@ void CreatePortal(Guardian* player, Village* current, vector<Village*> map) //Fu
 				cout << "No tienes los Puntos de Poder suficientes para crear un portal" << endl
 				<< "Viaja o entrena maspara acumular los necesarios" << endl;
 			}
-			getchar();
-			fflush(stdin);
+			Pause(false);
 			return;
 		}
 		else
@@ -616,9 +615,7 @@ void PrintJourney(list<string> journey, Guardian* player) //Funcion para mostrar
 		cout << v << endl;
 	}
 	cout << "En ese orden" << endl;
-	getchar();
-	getchar();
-	fflush(stdin);
+	Pause(true);
 }
 
 void PrintHistory(list<Record*> history, Guardian* player) //Funcion para mostrar el historial de combates del jugador
@@ -639,9 +636,7 @@ void PrintHistory(list<Record*> history, Guardian* player) //Funcion para mostra
 		cout << "...Con lo cual obtuvo " << r->pointsGained << " Puntos de Poder"
 		<< " terminando con un total de " << r->pointsAccumulated << " Puntos" << endl;
 	}
-	getchar();
-	getchar();
-	fflush(stdin);
+	Pause(true);
 }
 
 bool AllVillagesVisited(vector<Village*> map) //Funcion para comprobar si todas las villas han sido visitadas
@@ -670,9 +665,7 @@ void FinalFight(Guardian* boss, Guardian* player, list<string> journey, list<Rec
 	cout << endl << "Finalmente, despues de todos los entrenamientos y viajes que " << player->GetName() << " ha vivido durante su aventura," << endl
 	<< "llego la hora de enfrentarse a " << boss->GetName() << " para convertirse en Guardian..." << endl;
 	PrintFinalFight(boss, player);
-	getchar();
-	getchar();
-	fflush(stdin);
+	Pause(true);
 	cout << endl << "\t...Felicidades, has completado el juego" << endl
 	<< endl << "Te gustaria ver tu recorrido como aprendiz? Ingresa <1> para verlo: ";
 	cin >> op;
@@ -957,9 +950,7 @@ int main()
 	<< root->GetName() << ", que se encuentra en " << map.front()->GetName() << ", y obtener el titulo de Guardian" << endl << endl
 	<< "\tSera capaz nuestro valiente aprendiz de lograr su cometido..?" << endl << endl
 	<< "Presiona <Enter> para continuar";
-	getchar();
-	getchar(); //esto está pensado únicamente para hacer una pausa y que haya interacción por parte del usuario
-	fflush(stdin);
+	Pause(true);
 	
 	current = FindVillage(map, player->GetVillage());
 	journey.push_back(current->GetName());
@@ -988,7 +979,7 @@ int main()
 		else
 		{
 			cout << "(1) Entrenar con un aprendiz" << endl
-			<< "(2) Entrenar con el maestro de la villa" << endl;
+			<< "(2) Entrenar con " << current->master->GetName() << ", maestro/a de la villa" << endl;
 		}
 		cout << "(3) Viajar" << endl
 		<< "(4) Usar alquimia (crear un portal para conectar dos ciudades desconectadas)" << endl
@@ -1012,9 +1003,7 @@ int main()
 						cout << endl << "Todavia no tienes la experiencia necesaria para enfrentarte a " << root->GetName() << endl
 						<< "(Necesitas haber visitado todas las villas o tener un Nivel de Poder mayor o igual a 90)" << endl
 						<< "Vuelve mas tarde cuando estes preparado" << endl;
-						getchar();
-						getchar();
-						fflush(stdin);
+						Pause(true);
 					}
 				}
 				else
@@ -1028,9 +1017,7 @@ int main()
 				{
 					cout << "Esa Opcion no es valida, por favor ingrese otra" << endl
 					<< "(Actualmente te encuentras en " << map.front()->GetName() << ", y aqui no hay aprendices)" << endl;
-					getchar();
-					getchar();
-					fflush(stdin);
+					Pause(true);
 				}
 				else
 				{
@@ -1067,9 +1054,7 @@ int main()
 	}
 	
 	cout << endl << "\tGracias por jugar The Guardian Journey" << endl;
-	getchar();
-	getchar();
-	fflush(stdin);
+	Pause(true);
 	
 	return 0;
 }
