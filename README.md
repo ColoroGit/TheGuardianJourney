@@ -25,8 +25,18 @@ Posterior a la carga de archivos está la creación o selección de personajes, 
 Finalmente, ya con un personaje, comienza la experiencia de juego, donde despues de un pequeño texto introductorio, el personaje comienza en su villa de origen, y se le dan las siguientes acciones para elegir:
 
  - Entrenar con un Aprendiz: Al seleccionar esta opción, se recomendará al Guardián que tenga un menor nivel de poder, pero de todas formas se mostrarán todas sus opciones a elegir. Una vez seleccionado el oponente comenzará la batalla, que estará decidida por el lanzamiento de un dado de 6 caras. Para salir vencedor, el jugador deberá obtener un número mayor a 2. Si se gana el combate, el aprendiz ganará 1 Punto de Poder. Aún así, independiente del resultado, se creará un registro del combate realizado.
- - Entrenar con el Maestro de la Villa:  
+ - Entrenar con *nombre*, Maestro/a de la Villa: Al seleccionar esta opción se pasa directamente al combate contra el Guardián con un mayor Nivel de Poder dentro de la villa, y en este caso, al lanzar el dado, necesitas por lo menos un 5 para ganar. Si se gana, se obtienen 2 Puntos de Poder, y también se crea un registro del combate independiente del resultado.
+ - Viajar: Al Viajar se muestra en pantalla las villas que esten directamente conectadas a la que se encuentra el jugador actualmente, y solo hay que ingresar el nombre a la que se desea ir. Cada vez que se viaja, se obtiene 1 Punto de Poder.
+ - Usar Alquímia: Esta opción te permite crear un camino entre la ciudad actual y cualquier otra ciudad con la que no exista conexión directa, pero para hacerlo es necesario gastar entre 2 y 4 Puntos de Poder, lo cual se decide aleatoriamente.
+ - Ver tu Recorrido: Esta opción muestra todas las villas por las que el jugador haya pasado desde que comenzó el juego.
+ - Ver tu Historial de Entrenamiento: Esta opción muestra los resgistros de todos los combates realizados por el jugador.
 
+Se hace una distinción en este menú de selección si el jugador se encuentra en la ciudad del jefe final, desapareciendo la opcion de entrenar con aprendices, ya que no deberían haber (incluso si se cargan Guardianes de tal forma que pertenezcan a la ciudad del jefe, estos no van a aparecer), pero apareciendo la opcion para enfrentarse al jefe final, pero esto solo será posible si se cumple 1 de las siguientes 2 condiciones:
+ - Haber pasado por todas las villas del juego
+ - Tener un Nivel de Poder mayor o igual a 90
+Llegados a ese punto, se mostrará un vistazo de lo que sería el combate entre el aprendiz del jugador y el jefe final, lo cual es el final del juego. Se te da la opción de ver el recorrido y el historial de combate del jugador antes de que el juego se cierre. 
+
+Con eso se llega al final de este README. Disfrute de la experiencia de juego y revise el archivo INSTALL para poder compilar y correr el juego en su consola de Windows. 
 
 [^1]: En esta parte hay un Easter Egg interesante dentro del programa, si desea descubrirlo por su cuenta, deje de leer este subíndice. 
 Cuando se muestra la lista de guardianes a seleccionar, no aparece el primero que se carga, quien vendría a ser el jefe del juego, 
