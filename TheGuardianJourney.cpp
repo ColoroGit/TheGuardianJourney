@@ -459,7 +459,7 @@ Record* Training(Guardian* opponent, Guardian* player, bool master, Village* cur
 		<< "Mejor suerte para la proxima, tu Nivel de Poder se mantiene intacto" << endl;
 		cout << "Nivel de Poder: " << player->PL << endl;
 		Pause(false);
-		return new Record(opponent, true, pointsGained, player->PL);
+		return new Record(opponent, false, pointsGained, player->PL);
 	}
 }
 
