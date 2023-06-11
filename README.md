@@ -1,6 +1,9 @@
 # TheGuardianJourney
+## [Repositorio GitHub](https://github.com/ColoroGit/TheGuardianJourney)
 
 Este programa fue elaborado por Tomás Concha, como solución a la problematica entregada por el profesor Manuel Moscoso, para el proyecto de la segunda unidad del curso Algoritmos y Estructiras de Datos. 
+
+Si desea ver un explicativo audiovisual de este proyecto, puede acceder a él haciendo click [aquí](https://drive.google.com/file/d/1Irm4pL8jCJzmij1eMHkC-QGGNB2poaio/view?usp=sharing) 
 
 La problemática en sí era aplicar los contenidos vistos en clase, que abarcan la comprensión y aplicación de Tipos de Datos Abstractos, el uso de árboles y grafos y sus algorimtos asociados (Busqueda, Inserción, Eliminación, etc.) para la implementación de soluciones, entre otros contenidos.
 
